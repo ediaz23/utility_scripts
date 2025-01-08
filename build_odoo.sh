@@ -12,15 +12,19 @@ fi
 odoo="$1.0"
 echo "Compilando odoo $odoo"
 
-echo "Copiando carpeta odoo"
-mkdir odoo
-cp -a ../../addons/odoo_base/. ./odoo/
-
-echo "Cambiando rama a $odoo"
-cd odoo
-git checkout $odoo
-cd ..
-rm -r ./odoo/.git
+if [[ "$2" == "--retry" ]]; then
+    echo "reitentando con los archivos presentes"
+else
+    echo "Copiando carpeta odoo"
+    mkdir odoo
+    cp -a ../../addons/odoo_base/. ./odoo/
+    
+    echo "Cambiando rama a $odoo"
+    cd odoo
+    git checkout $odoo
+    cd ..
+    rm -r ./odoo/.git
+fi
 
 if [[ "$odoo" == "18.0" || "$odoo" == "17.0" ]]; then
     echo "patch para requirements $odoo"
