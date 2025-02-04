@@ -33,10 +33,10 @@ for video_file in "$PWD"/*.mp4; do
         duration=$(ffmpeg -i "$video_file" 2>&1 | grep "Duration" | awk '{print $2}' | tr -d , | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }')
 
         # Condiciona el segundo de la captura según la duración del video
-        if (( $(echo "$duration < 15" | bc -l) )); then
+        if (( $(echo "$duration < 30" | bc -l) )); then
           ss_time="00:00:02"
         else
-          ss_time="00:00:15"
+          ss_time="00:00:30"
         fi
         # Tomar una captura de pantalla del video usando ffmpeg
         ffmpeg -i "$video_file" -ss "$ss_time" -vframes 1 "$video_folder/$filename_noext-big.jpg" 2>/dev/null
@@ -67,7 +67,7 @@ for i in "$video_folder"/*.png; do
                 psnr="100.0"
             fi
             psnr=$(echo "$psnr" | sed 's/dB//')
-            if (( $(echo "$psnr > 17" | bc -l) )); then
+            if (( $(echo "$psnr > 16.5" | bc -l) )); then
                 size_i=$(stat -c %s "$file_i")
                 size_j=$(stat -c %s "$j")
                 to_del=""
