@@ -14,7 +14,7 @@ for video in *.mp4; do
     alto=$(echo "$resolucion" | cut -d ',' -f2)
 
     # Comprobar si la resolución es mayor que 720p
-    if [ "$ancho" -gt 1280 ] || [ "$alto" -gt 720 ]; then
+    if [ "$ancho" -gt 1280 ] && [ "$alto" -gt 720 ] || [ "$ancho" -gt 720 ] && [ "$alto" -gt 1280 ]; then
         # Calcular la nueva altura y anchura manteniendo la relación de aspecto
         if [ "$ancho" -gt "$alto" ]; then
             echo "  landscape"
