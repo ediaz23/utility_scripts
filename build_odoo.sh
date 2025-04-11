@@ -23,7 +23,8 @@ else
     cd odoo
     git checkout $odoo
     cd ..
-    rm -r ./odoo/.git
+    echo "borrando carpeta git"
+    rm -fr ./odoo/.git
 fi
 
 if [[ "$odoo" == "18.0" || "$odoo" == "17.0" ]]; then
