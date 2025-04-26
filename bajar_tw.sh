@@ -8,11 +8,13 @@ echo "tmp_dir $temp_dir";
 cd "$temp_dir";
 echo "$url"
 
-for ((i=0;i<2001;++i));
-do
-    if ! wget -c "$url/video$i.ts"; then
-        break;
+i=0
+while true; do
+    if ! wget -4 -c "$url/video$i.ts"; then
+        echo "termino la descarga"
+        break
     fi
+    ((i++))
 done
 
 count=$(ls *.ts 2>/dev/null | wc -l)
