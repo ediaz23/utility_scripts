@@ -22,9 +22,9 @@ else:
     while chunk:
         try:
             print(f'{url_api}/posts?o={offset}')
-            r = requests.get(f'{url_api}/posts?o={offset}', headers={'Accept': 'text/css'}, timeout=10)
-            r.raise_for_status()
-            chunk = r.json()
+            res = requests.get(f'{url_api}/posts?o={offset}', headers={'Accept': 'text/css'}, timeout=10)
+            res.raise_for_status()
+            chunk = res.json()
         except Exception:
             chunk = []
 
@@ -35,13 +35,13 @@ else:
     with open('post.json', 'w') as f:
         json.dump(result, f, indent=4)
 
-for r in result:
-    if r['file'] and not r.get('ready'):
+for item in result:
+    if item['file'] and not item.get('ready'):
         try:
-            print(f'{url_api}/post/{r["id"]}')
-            r = requests.get(f'{url_api}/post/{r["id"]}', headers={'Accept': 'text/css'}, timeout=10)
-            r.raise_for_status()
-            data = r.json()
+            print(f'{url_api}/post/{item["id"]}')
+            res = requests.get(f'{url_api}/post/{item["id"]}', headers={'Accept': 'text/css'}, timeout=10)
+            res.raise_for_status()
+            data = res.json()
             okey = True
             for video in data['videos']:
                 video_url = f'{video["server"]}/data/{video["path"]}'
@@ -51,7 +51,7 @@ for r in result:
                 except subprocess.CalledProcessError:
                     okey = False
                     print("wget falló")
-            r['ready'] = okey
+            item['ready'] = okey
             with open('post.json', 'w') as f:
                 json.dump(result, f, indent=4)
         except Exception as e:
