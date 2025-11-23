@@ -44,7 +44,7 @@ for item in result:
             data = res.json()
             okey = True
             for video in data['videos']:
-                video_url = f'{video["server"]}/data/{video["path"]}'
+                video_url = f'{video["server"]}/data{video["path"]}'
                 print(video_url)
                 try:
                     subprocess.run(['wget', '-c', '-O', video['name'], video_url], check=True)
