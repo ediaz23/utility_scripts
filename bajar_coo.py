@@ -5,6 +5,7 @@ import requests
 import json
 import re
 import subprocess
+import time
 
 url = sys.argv[1]
 
@@ -45,12 +46,19 @@ for item in result:
             okey = True
             for video in data['videos']:
                 video_url = f'{video["server"]}/data{video["path"]}'
-                print(video_url)
-                try:
-                    subprocess.run(['wget', '-c', '-O', video['name'], video_url], check=True)
-                except subprocess.CalledProcessError:
-                    okey = False
-                    print("wget falló")
+                try_count = 0
+                while try_count < 5:
+                    print(video_url)
+                    try:
+                        subprocess.run(['wget', '-c', '-O', video['name'], video_url], check=True)
+                        try_count = 5
+                    except subprocess.CalledProcessError:
+                        print("wget falló")
+                        try_count += 1
+                        if try_count < 5:
+                            time.sleep(3)
+                        else:
+                            okey = False
             item['ready'] = okey
             with open('post.json', 'w') as f:
                 json.dump(result, f, indent=4)
