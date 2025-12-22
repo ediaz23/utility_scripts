@@ -7,7 +7,27 @@ import re
 import subprocess
 import time
 
+
+def download_url(video_url, name) -> bool:
+    try_count = 0
+    okey = True
+    while try_count < 5:
+        print(video_url)
+        try:
+            subprocess.run(['wget', '-c', '-O', name, video_url], check=True)
+            try_count = 5
+        except subprocess.CalledProcessError:
+            print("wget falló")
+            try_count += 1
+            if try_count < 5:
+                time.sleep(3)
+            else:
+                okey = False
+    return okey
+
+
 url = sys.argv[1]
+target = sys.argv[2] if len(sys.argv) > 2 else 'video'
 
 m = re.match(r'(https?://[^/]+)(.*)', url)
 host, rest = m.groups()
@@ -43,23 +63,16 @@ for item in result:
             res = requests.get(f'{url_api}/post/{item["id"]}', headers={'Accept': 'text/css'}, timeout=10)
             res.raise_for_status()
             data = res.json()
-            okey = True
-            for video in data['videos']:
-                video_url = f'{video["server"]}/data{video["path"]}'
-                try_count = 0
-                while try_count < 5:
-                    print(video_url)
-                    try:
-                        subprocess.run(['wget', '-c', '-O', video['name'], video_url], check=True)
-                        try_count = 5
-                    except subprocess.CalledProcessError:
-                        print("wget falló")
-                        try_count += 1
-                        if try_count < 5:
-                            time.sleep(3)
-                        else:
-                            okey = False
-            item['ready'] = okey
+            image_okey = True
+            if target in ('image', 'all'):
+                for image in data['previews']:
+                    image_okey = download_url(f'{image["server"]}/data{image["path"]}', image['name'])
+
+            video_okey = True
+            if target in ('video', 'all'):
+                for video in data['videos']:
+                    video_okey = download_url(f'{video["server"]}/data{video["path"]}', video['name'])
+            item['ready'] = image_okey and video_okey
             with open('post.json', 'w') as f:
                 json.dump(result, f, indent=4)
         except Exception as e:
