@@ -17,7 +17,8 @@ def download_url(video_url, name) -> bool:
             subprocess.run(['wget', '-c', '-O', name, video_url], check=True)
             try_count = 5
         except subprocess.CalledProcessError:
-            print("wget falló")
+            print(f"wget falló\nrm -f {name}")
+            subprocess.run(['rm', '-f', name], check=True)
             try_count += 1
             if try_count < 5:
                 time.sleep(3)
