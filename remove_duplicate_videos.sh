@@ -62,7 +62,8 @@ for i in "$video_folder"/*.png; do
             continue
         fi
         if [ "$file_i" != "$j" ]; then
-            psnr=$(compare -metric PSNR "$file_i" "$j" null: 2>&1)
+            echo "  compare ${file_i##*/} ${j##*/}"
+            psnr=$(compare -metric PSNR "$file_i" "$j" null: 2>&1 | awk '{print $1}')
             if [ "$psnr" == "inf" ]; then
                 psnr="100.0"
             fi
@@ -90,5 +91,3 @@ done
 
 rm -f "$video_folder"/*.png
 rmdir "$video_folder"
-
-

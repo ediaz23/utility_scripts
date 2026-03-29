@@ -43,12 +43,13 @@ for i in "$image_folder"/*.png; do
             continue
         fi
         if [ "$file_i" != "$j" ]; then
-            error=$(compare -metric PSNR "$file_i" "$j" null: 2>&1)
+            echo "  compare ${file_i##*/} ${j##*/}"
+            error=$(compare -metric PSNR "$file_i" "$j" null: 2>&1 | awk '{print $1}')
             if [[ "$error" =~ ^[0-9]+%$ ]]; then
                 echo "$i $j $error"
                 exit 1
             fi
-            psnr=$(compare -metric PSNR "$file_i" "$j" null: 2>&1)
+            psnr=$(compare -metric PSNR "$file_i" "$j" null: 2>&1 | awk '{print $1}')
             if [ "$psnr" == "inf" ]; then
                 psnr="100.0"
             fi
@@ -77,4 +78,3 @@ done
 shopt -u nullglob
 rm -f "$image_folder"/*.png
 rmdir "$image_folder"
-
