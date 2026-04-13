@@ -39,7 +39,7 @@ cp -a ../docker_git/$odoo/. ./
 find . -maxdepth 1 -mindepth 1 -not -name $SCRIPT_NAME -exec echo {} +
 
 echo "Construyendo imagen odoo:$odoo"
-docker build -t odoo:$odoo . --no-cache --network=host
+docker buildx build -t odoo:$odoo . --network=host --no-cache
 
 echo "Borrando"
 find . -maxdepth 1 -mindepth 1 -not -name $SCRIPT_NAME -exec echo {} +
