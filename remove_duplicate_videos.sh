@@ -63,11 +63,13 @@ for i in "$video_folder"/*.png; do
         fi
         if [ "$file_i" != "$j" ]; then
             echo "  compare ${file_i##*/} ${j##*/}"
-            psnr=$(compare -metric PSNR "$file_i" "$j" null: 2>&1 | awk '{print $1}')
-            if [ "$psnr" == "inf" ]; then
+            mse=$(compare -metric MSE "$file_i" "$j" null: 2>&1 | awk '{print $1}')
+            if [ "$mse" == "0" ]; then
                 psnr="100.0"
+            else
+                psnr=$(compare -metric PSNR "$file_i" "$j" null: 2>&1 | awk '{print $1}')
+                psnr=$(echo "$psnr" | sed 's/dB//')
             fi
-            psnr=$(echo "$psnr" | sed 's/dB//')
             if (( $(echo "$psnr > 16.5" | bc -l) )); then
                 size_i=$(stat -c %s "$file_i")
                 size_j=$(stat -c %s "$j")
