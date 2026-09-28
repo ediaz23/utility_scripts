@@ -23,8 +23,8 @@ fi
 
 if [[ "$odoo" == "18.0" || "$odoo" == "17.0" ]]; then
     echo "patch para requirements $odoo"
-    sed -i 's/gevent==21\.8\.0/gevent==22.10.2/g' ./odoo/requirements.txt
-    sed -i 's/greenlet==1\.1\.2/greenlet==2.0.2/g' ./odoo/requirements.txt
+    sed -i 's/gevent==21\.8\.0/gevent==22.10.2/g' ./requirements.txt
+    sed -i 's/greenlet==1\.1\.2/greenlet==2.0.2/g' ./requirements.txt
 fi
 
 find . -maxdepth 1 -mindepth 1 -not -name $SCRIPT_NAME -exec echo {} +
