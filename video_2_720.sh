@@ -46,12 +46,16 @@ for video in *.mp4; do
             echo "  El vídeo $video a 720p. $ancho x $alto => $nueva_anchura x $nueva_altura"
         fi
     else
-        if [[ ! $video =~ _720p\.mp4$ ]]; then
-            if ffmpeg -y -i "$video" -threads 16 -c:v libx264 -preset veryslow -b:v 1500k -pass 1 -f mp4 /dev/null && \
-               ffmpeg    -i "$video" -threads 16 -c:v libx264 -preset veryslow -b:v 1500k -pass 2 -c:a aac "${video%.*}_720p.mp4"; then
-                rm "$video";
+        if [[ -f "${video%.*}_720p.mp4" ]]; then
+            echo "  El vídeo $video saltado else"
+        else
+            if [[ ! $video =~ _720p\.mp4$ ]]; then
+                if ffmpeg -y -i "$video" -threads 16 -c:v libx264 -preset veryslow -b:v 1500k -pass 1 -f mp4 /dev/null && \
+                   ffmpeg    -i "$video" -threads 16 -c:v libx264 -preset veryslow -b:v 1500k -pass 2 -c:a aac "${video%.*}_720p.mp4"; then
+                    rm "$video";
+                fi
+                echo "  El vídeo $video crf $ancho x $alto"
             fi
-            echo "  El vídeo $video crf $ancho x $alto"
         fi
     fi
     rm -f ffmpeg2pass-0.log ffmpeg2pass-0.log.mbtree;

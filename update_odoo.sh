@@ -24,7 +24,7 @@ export GIT_ASKPASS="$GIT_ASKPASS"
 if [[ -n "$1" ]]; then
     IFS=',' read -r -a branches <<< "$1"
 else
-    branches=("11.0" "12.0" "13.0" "14.0" "15.0" "16.0" "17.0" "18.0")
+    branches=("11.0" "12.0" "13.0" "14.0" "15.0" "16.0" "17.0" "18.0" "19.0" "20.0")
 fi
 
 # Iterar por cada rama
@@ -54,10 +54,21 @@ for branch in "${branches[@]}"; do
 
 done
 
-echo "Ejecutando git gc --aggressive --prune=now"
-if ! git gc --aggressive --prune=now; then
+# El pico de RAM del empaquetado es aproximadamente: núcleos x pack.windowMemory.
+# Repartimos 2,5 GiB entre todos los hilos y dejamos el resto de margen para el
+# índice de objetos, quedando el total por debajo de los 4 GiB.
+WINDOW_MEMORY="$(( 3072 / $(nproc) ))m"
+
+# Descomentar solo si quieres liberar tambien los commits huerfanos de los rebases.
+# OJO: despues de esto ya no se pueden recuperar con git reflog.
+# git reflog expire --expire=now --expire-unreachable=now --all
+
+echo "Ejecutando git gc --prune=now (RAM acotada a ~4 GiB, window=$WINDOW_MEMORY)"
+if ! git -c pack.windowMemory="$WINDOW_MEMORY" \
+         -c pack.deltaCacheSize=128m \
+         -c core.bigFileThreshold=16m \
+         gc --prune=now; then
     echo "Error al ejecutar git gc en la rama $branch. Continuando..."
 fi
 
 echo "Script completado exitosamente."
-
