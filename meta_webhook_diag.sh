@@ -6,8 +6,8 @@
 # ------------------------- Configuracion -------------------------
 PLATFORM="ig"                          # ig | fb | wa
 
-PAGE_ID=""              # ig/fb: id de la pagina de Facebook
-IG_ID=""         # ig: id de la cuenta profesional (vacio = no se valida)
+PAGE_ID=""                             # ig/fb: id de la pagina de Facebook
+IG_USER_ID=""                          # ig: id de la cuenta profesional (vacio = no se valida)
 
 PHONE_NUMBER_ID=""                     # wa: id del numero
 WABA_ID=""                             # wa: id de la cuenta de WhatsApp Business
@@ -209,9 +209,9 @@ if [ "$PLATFORM" = "ig" ]; then
 
     info "instagram=@${IG_NAME} (${IG_REAL})"
 
-    if [ -n "$IG_ID" ] && [ "$IG_REAL" != "$IG_ID" ]; then
-        fail "La pagina tiene vinculada la cuenta IG ${IG_REAL}, pero configuraste IG_ID=${IG_ID}." \
-             "Corrige IG_ID, o revisa si revincularon otra cuenta de Instagram a esta pagina."
+    if [ -n "$IG_USER_ID" ] && [ "$IG_REAL" != "$IG_USER_ID" ]; then
+        fail "La pagina tiene vinculada la cuenta IG ${IG_REAL}, pero configuraste IG_USER_ID=${IG_USER_ID}." \
+             "Corrige IG_USER_ID, o revisa si revincularon otra cuenta de Instagram a esta pagina."
     fi
     ok "La cuenta de Instagram vinculada coincide con la configurada"
 fi
